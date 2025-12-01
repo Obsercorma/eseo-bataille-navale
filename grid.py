@@ -43,6 +43,7 @@ class Grid:
     def __init__(self, depth: DepthRule, sea: str, ships: list[Ship]):
         self.cells = []
         self.ships = ships
+        self.sea = sea
         self.depth = depth
         self._chrEndCol = chr(self.CHR_START_INDEX + self.NUMBER_OF_ROWS - 1)
         self.headers = [
@@ -62,7 +63,7 @@ class Grid:
 
     def generate_grid(self):
         print(CLEAR_CHR)
-        print("|\tGrille{}\t|")
+        print(f"Grille {self.sea}".center(65))
         print(
             tabulate(
                 headers=self.headers,
@@ -72,7 +73,7 @@ class Grid:
             ),
         )
 
-    def fireOnTarget(self, coords: str, cellCase: CellCase) -> list[Ship]:
+    def fireOnTarget(self, coords: str):
         regex = "^[A-endChr1]{1}[1-endRow]{1}".replace(
             "endChr", self._chrEndCol
         ).replace("endRow", f"{self.NUMBER_OF_ROWS}")
@@ -81,11 +82,26 @@ class Grid:
 
         row = ord(coords[0]) - 65
         col = int(coords[1])
-        self.cells[row][col] = cellCase
+
+        for ship in self.ships:
+            if ship.coords == coords:
+                self.cells[row][col] = CellCase.TARGET_HIT
+            topCell = chr(64 + col)
+            bottomCell = chr(66 + col)
+            leftCell = col - 1
+            rightCell = col + 1
+            if f"{row}{leftCell}":
+                self.cells[row][leftCell] = CellCase.TARGET_FOUND
+            if f"{row}{rightCell}":
+                self.cells[row][rightCell] = CellCase.TARGET_FOUND
+            if f"{topCell}{col}":
+                self.cells[topCell][col] = CellCase.TARGET_FOUND
+            if f"{bottomCell}{col}":
+                self.cells[bottomCell][col] = CellCase.TARGET_FOUND
 
 
 if __name__ == "__main__":
-    gridTest = Grid(DepthRule.DEPTH_200)
+    gridTest = Grid(DepthRule.DEPTH_200, "Mer A", [])
     gridTest.generate_grid()
-    gridTest.fireOnTarget("B2", CellCase.TARGET_HIT)
+    gridTest.fireOnTarget("B2")
     gridTest.generate_grid()
