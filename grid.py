@@ -1,4 +1,34 @@
 from tabulate import tabulate
+from enum import Enum
+from re import match
+
+
+# Définition des cas possibles dans une case sur la grille
+class CellCase(Enum):
+    # Aucun batiment dans cette case
+    TARGET_NOTHING = "*"
+    # Batiment repéré
+    TARGET_FOUND = "V"
+    # Batiment touché
+    TARGET_HIT = "T"
+    # Batiment détruit
+    TARGET_DESTROYED = "C"
+
+    def __str__(self):
+        return self.value
+
+
+# Cas de profondeurs en mètres
+class DepthRule(Enum):
+    # 100m
+    DEPTH_100 = 100
+    # 200m
+    DEPTH_200 = 200
+    # 300m
+    DEPTH_300 = 300
+
+    def __str__(self):
+        return f"{self.value}m"
 
 
 class Grid:
@@ -6,13 +36,13 @@ class Grid:
     NUMBER_OF_ROWS = 5
     CHR_START_INDEX = 65  # 'A'
 
-    def __init__(self):
+    def __init__(self, depth: DepthRule):
         self.cells = []
+        self.depth = depth
+        self._chrEndCol = chr(self.CHR_START_INDEX + self.NUMBER_OF_ROWS - 1)
         self.headers = [
             hName if hName != 0 else " " for hName in range(self.NUMBER_OF_COLS)
         ]
-
-    def generate_grid(self):
         self.cells = [
             [
                 "*" if col != 0 else chr(self.CHR_START_INDEX + row)
@@ -20,13 +50,28 @@ class Grid:
             ]
             for row in range(self.NUMBER_OF_ROWS)
         ]
+
+    def generate_grid(self):
         print(
             tabulate(
                 headers=self.headers, tabular_data=self.cells, tablefmt="rounded_grid"
             )
         )
 
+    def fireOnTarget(self, coords: str, cellCase: CellCase):
+        regex = "^[A-endChr1]{1}[1-endRow]{1}".replace(
+            "endChr", self._chrEndCol
+        ).replace("endRow", f"{self.NUMBER_OF_ROWS}")
+        if not match(regex, coords):
+            return print(f"L'emplacement {coords} sur la grille n'existe pas !")
+
+        row = ord(coords[0]) - 65
+        col = int(coords[1])
+        self.cells[row][col] = cellCase
+        self.generate_grid()
+
 
 if __name__ == "__main__":
-    gridTest = Grid()
+    gridTest = Grid(200)
     gridTest.generate_grid()
+    gridTest.fireOnTarget("B2", CellCase.TARGET_HIT)
