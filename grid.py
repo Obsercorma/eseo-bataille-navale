@@ -1,6 +1,7 @@
 from tabulate import tabulate
 from enum import Enum
 from re import match
+from ships import Ship
 
 CLEAR_CHR = "\x1b[2J"
 
@@ -39,8 +40,9 @@ class Grid:
     NUMBER_OF_ROWS = 5
     CHR_START_INDEX = 65  # 'A'
 
-    def __init__(self, depth: DepthRule):
+    def __init__(self, depth: DepthRule, sea: str, ships: list[Ship]):
         self.cells = []
+        self.ships = ships
         self.depth = depth
         self._chrEndCol = chr(self.CHR_START_INDEX + self.NUMBER_OF_ROWS - 1)
         self.headers = [
@@ -60,13 +62,17 @@ class Grid:
 
     def generate_grid(self):
         print(CLEAR_CHR)
+        print("|\tGrille{}\t|")
         print(
             tabulate(
-                headers=self.headers, tabular_data=self.cells, tablefmt="rounded_grid"
+                headers=self.headers,
+                tabular_data=self.cells,
+                tablefmt="rounded_grid",
+                stralign="center",
             ),
         )
 
-    def fireOnTarget(self, coords: str, cellCase: CellCase):
+    def fireOnTarget(self, coords: str, cellCase: CellCase) -> list[Ship]:
         regex = "^[A-endChr1]{1}[1-endRow]{1}".replace(
             "endChr", self._chrEndCol
         ).replace("endRow", f"{self.NUMBER_OF_ROWS}")
