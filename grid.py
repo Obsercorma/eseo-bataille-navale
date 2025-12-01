@@ -2,6 +2,8 @@ from tabulate import tabulate
 from enum import Enum
 from re import match
 
+CLEAR_CHR = "\x1b[2J"
+
 
 # Définition des cas possibles dans une case sur la grille
 class CellCase(Enum):
@@ -33,7 +35,7 @@ class DepthRule(Enum):
 
 
 class Grid:
-    NUMBER_OF_COLS = 9
+    NUMBER_OF_COLS = 10
     NUMBER_OF_ROWS = 5
     CHR_START_INDEX = 65  # 'A'
 
@@ -52,11 +54,16 @@ class Grid:
             for row in range(self.NUMBER_OF_ROWS)
         ]
 
+    # Vérifie si la profondeur renseigné correspond à celle qui a été initialisé au départ
+    def checkDepth(self, depth: int):
+        return depth == self.depth.value
+
     def generate_grid(self):
+        print(CLEAR_CHR)
         print(
             tabulate(
                 headers=self.headers, tabular_data=self.cells, tablefmt="rounded_grid"
-            )
+            ),
         )
 
     def fireOnTarget(self, coords: str, cellCase: CellCase):
@@ -72,6 +79,7 @@ class Grid:
 
 
 if __name__ == "__main__":
-    gridTest = Grid(200)
+    gridTest = Grid(DepthRule.DEPTH_200)
     gridTest.generate_grid()
     gridTest.fireOnTarget("B2", CellCase.TARGET_HIT)
+    gridTest.generate_grid()
