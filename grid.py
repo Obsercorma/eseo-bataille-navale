@@ -5,8 +5,9 @@ from re import match
 
 # Définition des cas possibles dans une case sur la grille
 class CellCase(Enum):
+    TARGET_UNKNOWN = "*"
     # Aucun batiment dans cette case
-    TARGET_NOTHING = "*"
+    TARGET_NOTHING = "R"
     # Batiment repéré
     TARGET_FOUND = "V"
     # Batiment touché
@@ -68,7 +69,6 @@ class Grid:
         row = ord(coords[0]) - 65
         col = int(coords[1])
         self.cells[row][col] = cellCase
-        self.generate_grid()
 
 
 if __name__ == "__main__":
