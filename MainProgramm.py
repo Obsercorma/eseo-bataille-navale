@@ -3,7 +3,6 @@ from grid import *
 def position_correcte(position, nbcases, dico_positions):
     # Vérifier que les positions sont dans la grille 10x5 et ne se chevauchent pas
     print()
-    print(position)
     if len(position) != nbcases+1:
         print(f"Erreur: Il faut entrer {nbcases} positions plus la profondeur.")
         print('Camarade, vous n\'avez pas assez bu de Vodka.')
@@ -15,7 +14,6 @@ def position_correcte(position, nbcases, dico_positions):
     col_save, row_save = None, None
     coords = sorted(position[1:])
     for pos in coords:
-        print(coords)
         if len(pos) != 2:
             print(f'Erreur: La position {pos} n\'est pas valide.')
             print('Camarade, vous n\'avez pas assez bu de Vodka.')
@@ -110,18 +108,18 @@ def initialize_new_game():
     j1 = Joueur(J1)
     j2 = Joueur(J2)
 
-    ship1_J1 = Ship(positions[j1.name]["1cases"][2:], '100', 1, j1.name)
+    ship1_J1 = Ship(positions[j1.name]["1cases"][2:], positions[j1.name]["1cases"][1], 1, j1.name)
     j1.ships.append(ship1_J1)
-    ship2_J1 = Ship(positions[j1.name]["2cases"][2:], '100', 2, j1.name)
+    ship2_J1 = Ship(positions[j1.name]["2cases"][2:], positions[j1.name]["2cases"][1], 2, j1.name)
     j1.ships.append(ship2_J1)
-    ship3_J1 = Ship(positions[j1.name]["3cases"][2:], '100', 3, j1.name)
+    ship3_J1 = Ship(positions[j1.name]["3cases"][2:], positions[j1.name]["3cases"][1], 3, j1.name)
     j1.ships.append(ship3_J1)
 
-    ship1_J2 = Ship(positions[j2.name]["1cases"][2:], '100', 1, j2.name)
+    ship1_J2 = Ship(positions[j2.name]["1cases"][2:], positions[j2.name]["1cases"][1], 1, j2.name)
     j2.ships.append(ship1_J2)
-    ship2_J2 = Ship(positions[j2.name]["2cases"][2:], '100', 2, j2.name)
+    ship2_J2 = Ship(positions[j2.name]["2cases"][2:], positions[j2.name]["2cases"][1], 2, j2.name)
     j2.ships.append(ship2_J2)
-    ship3_J2 = Ship(positions[j2.name]["3cases"][2:], '100', 3, j2.name)
+    ship3_J2 = Ship(positions[j2.name]["3cases"][2:], positions[j2.name]["3cases"][1], 3, j2.name)
     j2.ships.append(ship3_J2)
 
     return j1, j2
@@ -132,6 +130,10 @@ def main():
     j1, j2 = initialize_new_game()
     print("La partie commence !")
     current_player = j1
+    for ships in j1.ships:
+        print(f"Joueur {j1.name} a positionné un sous-marin de taille {ships.taille} en profondeur {ships.profondeur} aux coordonnées {ships.coords}.")
+    for ships in j2.ships:
+        print(f"Joueur {j2.name} a positionné un sous-marin de taille {ships.taille} en profondeur {ships.profondeur} aux coordonnées {ships.coords}.")
     while True:
         if current_player == j1:
             print(f"100m {j2.grill100}")
