@@ -123,8 +123,6 @@ def initialize_new_game():
 
     return j1, j2
 
-
-
 def main():
     j1, j2 = initialize_new_game()
     print("La partie commence !")
