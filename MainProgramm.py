@@ -101,7 +101,6 @@ def initialize_new_game():
                 print("Veuillez réessayer.")
         print("Vos sous-marins ont étés positionnés avec succès!")
         print(225 * '\n')
-    print(positions)
 
     #Création des joueurs et affectations des sous-marins
 
@@ -130,10 +129,6 @@ def main():
     j1, j2 = initialize_new_game()
     print("La partie commence !")
     current_player = j1
-    for ships in j1.ships:
-        print(f"Joueur {j1.name} a positionné un sous-marin de taille {ships.taille} en profondeur {ships.profondeur} aux coordonnées {ships.coords}.")
-    for ships in j2.ships:
-        print(f"Joueur {j2.name} a positionné un sous-marin de taille {ships.taille} en profondeur {ships.profondeur} aux coordonnées {ships.coords}.")
     while True:
         if current_player == j1:
             print(f"100m {j2.grill100}")
