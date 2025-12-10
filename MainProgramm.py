@@ -48,10 +48,8 @@ def position_correcte(position, nbcases, dico_positions):
                     print('Camarade, vous n\'avez pas assez bu de Vodka.')
                     return False
         col_save, row_save = col, row
-    print(dico_positions)
     for key, value in dico_positions.items():
         for pos in value[2:]:
-            print(pos, position[1:])
             if pos in position[1:] and value[1] == position[0]:
                 print(f'Erreur: La position {pos} est déjà occupée par un autre sous-marin.')
                 print('Camarade, vous n\'avez pas assez bu de Vodka.')
@@ -69,8 +67,6 @@ def initialize_new_game():
 
     # Demander les positions des sous-marins
     positions = {}
-    dicos_bateaux = {}
-
     print("================================")
     print("\n\nCommençons par positionner vos sous-marins.")
     print("Ne regardez pas l'écran pendant que l'autre joueur entre ses positions.")
@@ -85,8 +81,7 @@ def initialize_new_game():
             sub3 = input(f"{joueur}, entrez les positions de votre sous marin de 3 cases: ")
             sub3 = sub3.split(" ")
             if position_correcte(sub3, 3, positions[joueur]):
-                positions[joueur][f"3cases_{joueur}"] = [3] + sub3
-
+                positions[joueur][f"3cases"] = [3] + sub3
                 break
             else:
                 print("Veuillez réessayer.")
@@ -94,7 +89,7 @@ def initialize_new_game():
             sub2 = input(f"{joueur}, entrez les positions de votre sous marin de 2 cases: ")
             sub2 = sub2.split(" ")
             if position_correcte(sub2, 2, positions[joueur]):
-                positions[joueur][f"2cases_{joueur}"] = [2] + sub2
+                positions[joueur][f"2cases"] = [2] + sub2
                 break
             else:
                 print("Veuillez réessayer.")
@@ -102,14 +97,15 @@ def initialize_new_game():
             sub1 = input(f"{joueur}, entrez la position de votre sous marin de 1 case: ")
             sub1 = sub1.split(" ")
             if position_correcte(sub1, 1, positions[joueur]):
-                positions[joueur][f"3cases_{joueur}"] = [1] + sub1
+                positions[joueur][f"1cases"] = [1] + sub1
                 break
             else:
                 print("Veuillez réessayer.")
-        print("Vos sous-marins ont été positionnés avec succès!")
+        print("Vos sous-marins ont étés positionnés avec succès!")
         print(225 * '\n')
     print(positions)
 
+    #Création des joueurs et affectations des sous-marins
 
     j1 = Joueur(J1)
     j2 = Joueur(J2)
@@ -121,23 +117,59 @@ def initialize_new_game():
     ship3_J1 = Ship(positions[j1.name]["3cases"][2:], '100', 3, j1.name)
     j1.ships.append(ship3_J1)
 
-    ship1_J2 = Ship(positions[j2.name]["3cases"][2:], '100', 1, j2.name)
+    ship1_J2 = Ship(positions[j2.name]["1cases"][2:], '100', 1, j2.name)
     j2.ships.append(ship1_J2)
-    ship2_J2 = Ship(positions[j2.name]["3cases"][2:], '100', 2, j2.name)
+    ship2_J2 = Ship(positions[j2.name]["2cases"][2:], '100', 2, j2.name)
     j2.ships.append(ship2_J2)
     ship3_J2 = Ship(positions[j2.name]["3cases"][2:], '100', 3, j2.name)
     j2.ships.append(ship3_J2)
 
+    return j1, j2
+
 
 
 def main():
-    charge_partie = input("Charger une partie existante ? (écrivez 'o' pour oui) ")
-    if charge_partie == 'o':
-        input("Entrez l'identifiant de la partie à charger : ")
-        print("Fonction de chargement de partie non encore implémentée.")
-        return
-    else:
-        initialize_new_game()
+    j1, j2 = initialize_new_game()
+    print("La partie commence !")
+    current_player = j1
+    while True:
+        if current_player == j1:
+            print(f"100m {j2.grill100}")
+            print(f"200m {j2.grill200}")
+            print(f"300m {j2.grill300}")
+        else:
+            print(f"100m {j1.grill100}")
+            print(f"200m {j1.grill200}")
+            print(f"300m {j1.grill300}")
+        print("Ci dessus l'océan de tir:")
+        print(f"C'est le tour de {current_player.name}.")
+        while True:
+            target = input(f"{current_player.name}, entrez les coordonnées de votre attaque au format 'profondeur coordonnées' (ex: '100 A1'): ")
+            target = target.split(" ")
+            if position_correcte(target, 1, {}):
+                print('Cible acceptée.')
+                break
+            print('Cible invalide, veuillez réessayer.')
+        if current_player == j1:
+            j2.cases_affected(target[0], target[1])
+            print(f"100m {j2.grill100}")
+            print(f"200m {j2.grill200}")
+            print(f"300m {j2.grill300}")
+            if j2.a_perdu():
+                print(f"Félicitations {j1.name}, vous avez gagné la guerre froide !")
+                break
+        else:
+            j1.cases_affected(target[0], target[1])
+            print(f"100m {j1.grill100}")
+            print(f"200m {j1.grill200}")
+            print(f"300m {j1.grill300}")
+            if j1.a_perdu():
+                print(f"Félicitations {j2.name}, vous avez gagné la guerre froide !")
+                break
+        print("Ci dessus l'état de l'océan de tir après l'attaque")
+        input("Appuyez sur n'importe quelle touche pour continuer...")
+        current_player = j2 if current_player == j1 else j1
+
 
 if __name__ == "__main__":
     main()
