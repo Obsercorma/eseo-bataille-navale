@@ -20,13 +20,20 @@ class Ship:
 class Joueur:
     def __init__(self, name: str):
         self.name = name
-        self.ships = []
+        self.ships: list[Ship] = []
         self.grill100 = Grid()
         self.grill200 = Grid()
         self.grill300 = Grid()
 
     def ajouter_ship(self, ship: Ship):
         self.ships.append(ship)
+
+    # Verifie si tous les navires du joueur ont coulés
+    def navires_coules(self) -> bool:
+        for ship in self.ships:
+            if not ship.est_coule():
+                return False
+        return True
 
 
 # Définition des cas possibles dans une case sur la grille
